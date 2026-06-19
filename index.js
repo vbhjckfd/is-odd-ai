@@ -10,8 +10,8 @@ async function isOdd(number) {
         // Construct the request payload
         const requestData = {
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: `Is ${number} odd or even?` }],
-            temperature: 0.7
+            messages: [{ role: "user", content: `Is the number ${number} odd? Reply with only "yes" if it is odd, or "no" if it is even. Do not include any other text, punctuation, or explanation.` }],
+            temperature: 0
         };
 
         // Make a POST request to OpenAI API
@@ -26,14 +26,9 @@ async function isOdd(number) {
         const { choices } = response.data;
         const answer = choices[0].message.content.trim().toLowerCase(); // Adjust based on API response structure
 
-        // Determine if the response indicates odd or even
-        if (answer.includes('odd')) {
-            return true;
-        } else if (answer.includes('even')) {
-            return false;
-        } else {
-            throw new Error('Unable to determine if number is odd or even.');
-        }
+        if (answer === 'yes') return true;
+        if (answer === 'no') return false;
+        throw new Error(`Unexpected response from model: "${answer}"`);
     } catch (error) {
         console.error('Error querying OpenAI:', error);
         throw error;
@@ -41,4 +36,3 @@ async function isOdd(number) {
 }
 
 module.exports = isOdd;
-
